@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>חיזוי מונדיאל 2026</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#07090D; color:#DEE8F2; font-family:system-ui,-apple-system,sans-serif; }
+.wrap { max-width:540px; margin:0 auto; padding:14px; }
+.header { background:#0C1118; border-bottom:1px solid #1A2835; padding:14px; text-align:center; }
+.live { display:flex; align-items:center; gap:8px; background:#060E18; border:1px solid #152030; border-radius:8px; padding:6px 10px; margin-bottom:10px; font-size:11px; color:#5A9ABF; }
+.dot { width:7px; height:7px; border-radius:50%; background:#00C97A; box-shadow:0 0 6px #00C97A; flex-shrink:0; animation:pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.title { font-size:22px; font-weight:900; background:linear-gradient(135deg,#E8B84B,#D4902A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.sub { font-size:11px; color:#3D5568; margin-top:2px; }
+.card { background:#0C1118; border:1px solid #1A2835; border-radius:14px; padding:16px; margin-bottom:14px; }
+.label { font-size:10px; color:#3D5568; letter-spacing:1px; margin-bottom:7px; }
+.grp-btns { display:flex; gap:5px; flex-wrap:wrap; }
+.gbtn { width:32px; height:28px; background:#111820; color:#3D5568; border:1px solid #1A2835; border-radius:7px; cursor:pointer; font-size:12px; }
+.gbtn.active { background:linear-gradient(135deg,#E8B84B,#D4902A); color:#000; font-weight:800; border-color:transparent; }
+.tbtn { display:flex; align-items:center; gap:10px; width:100%; padding:10px 12px; margin-bottom:5px; background:#111820; color:#DEE8F2; border:1px solid #1A2835; border-radius:9px; cursor:pointer; font-size:13px; font-weight:600; text-align:right; }
+.tbtn.sel { background:#0A1E32; border-color:#E8B84B; }
+.flag { font-size:20px; }
+.cta { width:100%; padding:13px 0; background:linear-gradient(135deg,#E8B84B,#D4902A); color:#000; border:none; border-radius:12px; font-size:14px; font-weight:800; cursor:pointer; }
+.cta:disabled { background:#111820; color:#3D5568; cursor:not-allowed; }
+.scorebug { background:#04080D; border:1px solid #E8B84B; border-radius:12px; padding:16px; text-align:center; margin-bottom:14px; }
+.score { background:#060A10; border:2px solid #E8B84B; border-radius:10px; padding:8px 16px; font-family:'Courier New',monospace; font-size:34px; font-weight:900; color:#E8B84B; letter-spacing:5px; display:inline-block; }
+.chip { background:#111820; border:1px solid #1A2835; border-radius:20px; padding:3px 10px; font-size:11px; color:#7A9AB0; display:inline-block; margin:2px; }
+.chip.gold { background:rgba(232,184,75,0.13); border-color:rgba(232,184,75,0.4); color:#E8B84B; }
+.chip.green { background:rgba(0,201,122,0.13); border-color:rgba(0,201,122,0.4); color:#00C97A; }
+.adj-banner { border-radius:8px; padding:7px 10px; margin-bottom:5px; font-size:11px; }
+.ev-box { background:linear-gradient(135deg,#0D1A10,#0A1508); border:1px solid rgba(0,201,122,0.4); border-radius:12px; padding:16px; margin-bottom:16px; }
+.row5 { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.bar { flex:1; background:#1A2835; border-radius:3px; height:6px; }
+.barfill { height:100%; border-radius:3px; }
+input[type=range] { width:100%; accent-color:#E8B84B; }
+.foot { text-align:center; padding:14px; color:#3D5568; font-size:10px; letter-spacing:1px; }
+</style>
+</head>
+<body>
+<div id="lockScreen" style="position:fixed;inset:0;background:#07090D;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;">
+  <div style="font-size:40px;margin-bottom:16px;">🔒</div>
+  <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,#E8B84B,#D4902A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;">חיזוי מונדיאל 2026</div>
+  <div style="font-size:13px;color:#3D5568;margin-bottom:24px;">הזן סיסמה כדי להיכנס</div>
+  <input id="pwInput" type="password" inputmode="numeric" placeholder="••••" style="width:200px;text-align:center;background:#111820;border:2px solid #1A2835;border-radius:12px;color:#E8B84B;font-size:28px;font-weight:800;font-family:'Courier New',monospace;padding:12px;letter-spacing:8px;outline:none;" onkeydown="if(event.key==='Enter')checkPw()">
+  <button onclick="checkPw()" style="width:200px;margin-top:14px;padding:13px;background:linear-gradient(135deg,#E8B84B,#D4902A);color:#000;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;">כניסה</button>
+  <div id="pwError" style="font-size:13px;color:#E06050;margin-top:12px;height:18px;"></div>
+</div>
+
+<div class="header">
+  <div class="live"><span class="dot"></span><span id="liveText">טוען נתונים...</span></div>
+  <div class="title">⚽ חיזוי מונדיאל 2026</div>
+  <div class="sub">Dixon-Coles · xGD · אופטימיזציה לליגה</div>
+</div>
+<div class="wrap">
+  <div class="card">
+    <div style="font-size:15px;font-weight:800;margin-bottom:10px;">🎯 חיזוי תוצאה מדויקת</div>
+    <div class="label">בחר בית</div>
+    <div class="grp-btns" id="groupBtns"></div>
+    <div style="margin-top:12px;" class="label">בחר שתי קבוצות</div>
+    <div id="teamBtns"></div>
+    <div class="label" style="margin-top:12px;">שלב בטורניר (קובע ניקוד)</div>
+    <div class="grp-btns" id="stageBtns"></div>
+    <div id="stageInfo" style="font-size:10px;color:#3D5568;margin:6px 0;text-align:center;"></div>
+    <div id="adjArea"></div>
+    <button class="cta" id="predictBtn" disabled onclick="doPredict()">בחר 2 קבוצות</button>
+  </div>
+  <div id="result"></div>
+</div>
+<div class="foot">DIXON-COLES · עדכון נתונים חי · <span id="updatedAt"></span></div>
+
+<script>
+// ===== PASSWORD GATE =====
+const PASSWORD = "2981";
+function checkPw(){
+  const val = document.getElementById('pwInput').value;
+  if(val === PASSWORD){
+    document.getElementById('lockScreen').style.display = 'none';
+  } else {
+    document.getElementById('pwError').textContent = 'סיסמה שגויה';
+    document.getElementById('pwInput').value = '';
+  }
+}
+
+// ===== DATA =====
+const PRE = {
+  Mexico:["A",1.50,1.00],"South Korea":["A",1.30,1.10],"South Africa":["A",0.90,1.30],Czechia:["A",1.10,1.20],
+  Canada:["B",1.20,1.10],Switzerland:["B",1.20,1.00],Qatar:["B",1.00,1.30],"Bosnia-Herz.":["B",1.00,1.20],
+  Brazil:["C",2.00,0.85],Morocco:["C",1.40,0.90],Scotland:["C",1.10,1.20],Haiti:["C",0.70,1.60],
+  USA:["D",1.40,1.10],Australia:["D",1.10,1.10],Paraguay:["D",1.00,1.20],"Turkiye":["D",1.20,1.10],
+  Germany:["E",1.90,0.90],Ecuador:["E",1.20,1.10],"Ivory Coast":["E",1.20,1.20],"Curacao":["E",0.70,1.50],
+  Netherlands:["F",1.70,0.90],Japan:["F",1.30,0.95],Tunisia:["F",0.95,1.20],Sweden:["F",1.20,1.05],
+  Belgium:["G",1.70,0.90],Iran:["G",1.00,1.10],Egypt:["G",1.00,1.10],"New Zealand":["G",0.80,1.30],
+  Spain:["H",1.90,0.75],Uruguay:["H",1.40,1.00],"Saudi Arabia":["H",0.90,1.20],"Cape Verde":["H",0.85,1.30],
+  France:["I",2.10,0.75],Senegal:["I",1.30,1.00],Norway:["I",1.80,1.10],Iraq:["I",0.90,1.40],
+  Argentina:["J",1.80,0.85],Austria:["J",1.30,1.00],Algeria:["J",1.10,1.10],Jordan:["J",0.85,1.30],
+  Portugal:["K",1.80,0.90],Colombia:["K",1.50,1.00],Uzbekistan:["K",0.95,1.20],"DR Congo":["K",1.00,1.20],
+  England:["L",1.70,0.85],Croatia:["L",1.30,1.00],Panama:["L",0.80,1.30],Ghana:["L",1.00,1.20]
+};
+const FLAGS={Mexico:"🇲🇽","South Korea":"🇰🇷","South Africa":"🇿🇦",Czechia:"🇨🇿",Canada:"🇨🇦",Switzerland:"🇨🇭",Qatar:"🇶🇦","Bosnia-Herz.":"🇧🇦",Brazil:"🇧🇷",Morocco:"🇲🇦",Scotland:"🏴󠁧󠁢󠁳󠁣󠁴󠁿",Haiti:"🇭🇹",USA:"🇺🇸",Australia:"🇦🇺",Paraguay:"🇵🇾","Turkiye":"🇹🇷",Germany:"🇩🇪",Ecuador:"🇪🇨","Ivory Coast":"🇨🇮","Curacao":"🇨🇼",Netherlands:"🇳🇱",Japan:"🇯🇵",Tunisia:"🇹🇳",Sweden:"🇸🇪",Belgium:"🇧🇪",Iran:"🇮🇷",Egypt:"🇪🇬","New Zealand":"🇳🇿",Spain:"🇪🇸",Uruguay:"🇺🇾","Saudi Arabia":"🇸🇦","Cape Verde":"🇨🇻",France:"🇫🇷",Senegal:"🇸🇳",Norway:"🇳🇴",Iraq:"🇮🇶",Argentina:"🇦🇷",Austria:"🇦🇹",Algeria:"🇩🇿",Jordan:"🇯🇴",Portugal:"🇵🇹",Colombia:"🇨🇴",Uzbekistan:"🇺🇿","DR Congo":"🇨🇩",England:"🏴󠁧󠁢󠁥󠁮󠁧󠁿",Croatia:"🇭🇷",Panama:"🇵🇦",Ghana:"🇬🇭"};
+const GROUPS={};Object.entries(PRE).forEach(([t,p])=>{(GROUPS[p[0]]=GROUPS[p[0]]||[]).push(t);});
+const HOSTS={USA:0.25,Mexico:0.25,Canada:0.10};
+const RHO=-0.13, WC_CAL=0.90;
+const STAGE_PTS={group:[1,3],r32:[2,5],r16:[2,5],qf:[4,8],sf:[5,10],final:[8,15]};
+const STAGE_NAMES={group:"בתים",r32:"32",r16:"1/8",qf:"1/4",sf:"1/2",final:"גמר"};
+const STAGE_FACTOR={group:1.0,r32:0.90,r16:0.85,qf:0.78,sf:0.74,final:0.72};
+
+let ADJ={}; // loaded from JSON
+let group="I", t1=null, t2=null, stage="group";
+
+// ===== LOAD ADJUSTMENTS FROM JSON =====
+async function loadAdj(){
+  try {
+    const r = await fetch('adjustments.json?'+Date.now()); // cache-bust
+    const data = await r.json();
+    ADJ = data.adjustments || {};
+    document.getElementById('liveText').innerHTML = 'נתונים עודכנו: <b style="color:#E8B84B">'+(data.lastUpdated||'')+'</b>';
+    document.getElementById('updatedAt').textContent = data.lastUpdated||'';
+  } catch(e) {
+    document.getElementById('liveText').textContent = 'משתמש בנתוני בסיס (אין קובץ התאמות)';
+    ADJ = {};
+  }
+}
+
+// ===== ENGINE =====
+function poisson(k,l){let f=1;for(let i=2;i<=k;i++)f*=i;return Math.exp(-l)*Math.pow(l,k)/f;}
+function dcTau(a,b,l1,l2){if(a===0&&b===0)return 1-l1*l2*RHO;if(a===0&&b===1)return 1+l1*RHO;if(a===1&&b===0)return 1+l2*RHO;if(a===1&&b===1)return 1-RHO;return 1;}
+function predict(team1,team2,stg){
+  const f=STAGE_FACTOR[stg];
+  const h1=HOSTS[team1]||0,h2=HOSTS[team2]||0;
+  const a1=(ADJ[team1]&&ADJ[team1].d)||0, a2=(ADJ[team2]&&ADJ[team2].d)||0;
+  const xg1=Math.max(0.2,PRE[team1][1]*PRE[team2][2]*f*WC_CAL+h1+a1);
+  const xg2=Math.max(0.2,PRE[team2][1]*PRE[team1][2]*f*WC_CAL+h2+a2);
+  const grid=[]; let sumP=0,best={p:0,a:1,b:0};
+  for(let a=0;a<=7;a++)for(let b=0;b<=7;b++){const p=poisson(a,xg1)*poisson(b,xg2)*dcTau(a,b,xg1,xg2);sumP+=p;grid.push({a,b,p});if(p>best.p)best={p,a,b};}
+  let wp1=0,wpD=0,wp2=0;grid.forEach(x=>{if(x.a>x.b)wp1+=x.p;else if(x.a===x.b)wpD+=x.p;else wp2+=x.p;});
+  const [dirPts,exactPts]=STAGE_PTS[stg];
+  const cands=grid.map(c=>{const cD=c.a>c.b?1:c.a===c.b?0:2;let pEx=c.p/sumP,pDir=0;grid.forEach(o=>{const oD=o.a>o.b?1:o.a===o.b?0:2;if(oD===cD&&!(o.a===c.a&&o.b===c.b))pDir+=o.p/sumP;});return{s:c.a+"-"+c.b,ev:pEx*exactPts+pDir*dirPts,pEx:Math.round(pEx*100)};});
+  cands.sort((a,b)=>b.ev-a.ev);
+  const top5=grid.map(x=>({s:x.a+"-"+x.b,p:Math.round(x.p/sumP*100)})).sort((a,b)=>b.p-a.p).slice(0,5);
+  return {ml:best.a+"-"+best.b,xg1:xg1.toFixed(1),xg2:xg2.toFixed(1),wp1:Math.round(wp1/sumP*100),wpD:Math.round(wpD/sumP*100),wp2:Math.round(wp2/sumP*100),ev:cands[0],evTop:cands.slice(0,4),top5,host:h1>0?team1:h2>0?team2:null};
+}
+
+// ===== UI =====
+function renderGroups(){
+  document.getElementById('groupBtns').innerHTML = Object.keys(GROUPS).map(g=>
+    '<button class="gbtn '+(group===g?'active':'')+'" onclick="setGroup(\''+g+'\')">'+g+'</button>').join('');
+}
+function renderStages(){
+  document.getElementById('stageBtns').innerHTML = Object.keys(STAGE_NAMES).map(s=>
+    '<button class="gbtn '+(stage===s?'active':'')+'" style="width:auto;padding:0 10px;" onclick="setStage(\''+s+'\')">'+STAGE_NAMES[s]+'</button>').join('');
+  document.getElementById('stageInfo').textContent = 'ניקוד: כיוון '+STAGE_PTS[stage][0]+' · מדויק '+STAGE_PTS[stage][1]+' נק\'';
+}
+function renderTeams(){
+  document.getElementById('teamBtns').innerHTML = GROUPS[group].map(t=>{
+    const sel = (t1===t||t2===t);
+    const mark = t1===t?'①':t2===t?'②':'';
+    return '<button class="tbtn '+(sel?'sel':'')+'" onclick="pickTeam(\''+t.replace(/'/g,"\\'")+'\')"><span class="flag">'+FLAGS[t]+'</span><span style="flex:1">'+t+'</span><span style="color:#E8B84B;font-weight:800">'+mark+'</span></button>';
+  }).join('');
+  renderAdj();
+}
+function renderAdj(){
+  let html='';
+  [t1,t2].forEach(t=>{
+    if(t && ADJ[t]){
+      const pos = ADJ[t].d>0;
+      const col = pos?'#00C97A':'#E06050';
+      const bg = pos?'#0A1810':'#1A0E0A';
+      html += '<div class="adj-banner" style="background:'+bg+';border:1px solid '+col+'44;"><b style="color:'+col+';font-family:monospace">'+t+': '+(pos?'+':'')+ADJ[t].d+'</b> <span style="color:#3D5568">'+ADJ[t].why+'</span></div>';
+    }
+  });
+  document.getElementById('adjArea').innerHTML = html;
+}
+function setGroup(g){group=g;t1=null;t2=null;renderGroups();renderTeams();updateBtn();clearResult();}
+function setStage(s){stage=s;renderStages();clearResult();}
+function pickTeam(t){
+  if(!t1||(t1&&t2)){t1=t;t2=null;} else if(t!==t1){t2=t;}
+  renderTeams();updateBtn();clearResult();
+}
+function updateBtn(){
+  const b=document.getElementById('predictBtn');
+  if(!t1){b.disabled=true;b.textContent='בחר קבוצה ראשונה';}
+  else if(!t2){b.disabled=true;b.textContent='בחר קבוצה שנייה';}
+  else {b.disabled=false;b.textContent='🎯 חזה תוצאה';}
+}
+function clearResult(){document.getElementById('result').innerHTML='';}
+function doPredict(){
+  if(!t1||!t2)return;
+  const r=predict(t1,t2,stage);
+  const evDiff = r.ev.s!==r.ml;
+  let html = '<div class="card">';
+  // EV recommendation
+  html += '<div class="ev-box"><div style="font-size:10px;color:#00C97A;letter-spacing:1px;font-weight:700;margin-bottom:10px;">🏆 הניחוש שמנצח את הליגה ('+STAGE_NAMES[stage]+')</div>';
+  html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;"><div style="background:#04080D;border:2px solid #00C97A;border-radius:10px;padding:10px 18px;font-family:monospace;font-size:30px;font-weight:900;color:#00C97A;letter-spacing:4px;">'+r.ev.s+'</div><div><div style="font-size:12px;color:#DEE8F2">תוחלת: <b style="color:#00C97A;font-family:monospace">'+r.ev.ev.toFixed(2)+'</b> נק\'</div><div style="font-size:11px;color:#3D5568;margin-top:2px">סיכוי מדויק: '+r.ev.pEx+'%</div></div></div>';
+  if(evDiff) html += '<div style="background:#0A0E14;border-radius:8px;padding:8px 10px;font-size:11px;color:#7A9AB0">💡 ההמלצה <b style="color:#00C97A">'+r.ev.s+'</b> עדיפה על התוצאה הסבירה <b style="color:#E8B84B">'+r.ml+'</b> כי תופסת יותר תוצאות באותו כיוון.</div>';
+  html += '</div>';
+  // Scorebug
+  html += '<div style="font-size:10px;color:#E8B84B;letter-spacing:2px;font-weight:700;margin-bottom:12px;">DIXON-COLES · xGD</div>';
+  html += '<div class="scorebug"><div style="display:flex;align-items:center;justify-content:center;gap:12px;"><div><div style="font-size:22px">'+FLAGS[t1]+'</div><div style="font-size:11px;color:#7A9AB0;margin-top:2px">'+t1+'</div></div><div class="score">'+r.ml+'</div><div><div style="font-size:22px">'+FLAGS[t2]+'</div><div style="font-size:11px;color:#7A9AB0;margin-top:2px">'+t2+'</div></div></div>';
+  html += '<div style="margin-top:10px"><span class="chip green">xG '+r.xg1+' - '+r.xg2+'</span>';
+  if(r.host) html += '<span class="chip green">🏟 בית: '+r.host+'</span>';
+  html += '</div></div>';
+  // Win probs
+  html += '<div style="display:flex;gap:8px;margin-bottom:14px"><div style="flex:1;background:#111820;border:1px solid #1A2835;border-radius:10px;padding:10px;text-align:center"><div style="font-size:18px;font-weight:900;color:#E8B84B;font-family:monospace">'+r.wp1+'%</div><div style="font-size:10px;color:#3D5568;margin-top:3px">'+t1+'</div></div><div style="flex:1;background:#111820;border:1px solid #1A2835;border-radius:10px;padding:10px;text-align:center"><div style="font-size:18px;font-weight:900;color:#7A9AB0;font-family:monospace">'+r.wpD+'%</div><div style="font-size:10px;color:#3D5568;margin-top:3px">תיקו</div></div><div style="flex:1;background:#111820;border:1px solid #1A2835;border-radius:10px;padding:10px;text-align:center"><div style="font-size:18px;font-weight:900;color:#3A82C4;font-family:monospace">'+r.wp2+'%</div><div style="font-size:10px;color:#3D5568;margin-top:3px">'+t2+'</div></div></div>';
+  // Top 5
+  html += '<div class="label">5 התוצאות הסבירות ביותר</div>';
+  r.top5.forEach((x,i)=>{html += '<div class="row5"><span style="font-family:monospace;font-size:14px;font-weight:800;color:'+(i===0?'#E8B84B':'#7A9AB0')+';min-width:36px">'+x.s+'</span><div class="bar"><div class="barfill" style="width:'+(x.p*4)+'%;background:'+(i===0?'#E8B84B':'#3A82C4')+'"></div></div><span style="font-size:11px;font-family:monospace;color:#3D5568;min-width:30px;text-align:left">'+x.p+'%</span></div>';});
+  html += '</div>';
+  document.getElementById('result').innerHTML = html;
+}
+
+// ===== INIT =====
+(async function(){
+  await loadAdj();
+  renderGroups();
+  renderStages();
+  renderTeams();
+  updateBtn();
+})();
+</script>
+</body>
+</html>
